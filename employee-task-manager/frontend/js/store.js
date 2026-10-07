@@ -1,6 +1,8 @@
 /**
  * Employee Task Management System (ETMS)
- * Unified State Store & Data Persistence Layer (localStorage backed)
+ * Hybrid State & REST API Synchronization Layer
+ * - Syncs with Django Backend REST endpoints (/api/...) when server is running.
+ * - Gracefully falls back to LocalStorage in standalone/Live Server mode.
  */
 
 (function () {
@@ -11,8 +13,22 @@
     INITIALIZED: 'etms_initialized_v2'
   };
 
-  // Seed Data for initial load
+  const isServerAvailable = window.location.protocol.startsWith('http');
+
   const DEFAULT_EMPLOYEES = [
+    {
+      id: 'EMP-100',
+      firstName: 'Alex',
+      lastName: 'Davies',
+      email: 'admin@corp.com',
+      department: 'Operations & Management',
+      designation: 'Engineering Director & Admin',
+      role: 'admin',
+      status: 'active',
+      avatarBg: '#2563eb',
+      initials: 'AD',
+      joined: 'Aug 2022'
+    },
     {
       id: 'EMP-101',
       firstName: 'Emily',
@@ -64,19 +80,6 @@
       avatarBg: '#dc2626',
       initials: 'RP',
       joined: 'Nov 2023'
-    },
-    {
-      id: 'EMP-100',
-      firstName: 'Alex',
-      lastName: 'Davies',
-      email: 'admin@corp.com',
-      department: 'Operations & Management',
-      designation: 'Engineering Director & Admin',
-      role: 'admin',
-      status: 'active',
-      avatarBg: '#2563eb',
-      initials: 'AD',
-      joined: 'Aug 2022'
     }
   ];
 
@@ -85,7 +88,7 @@
       id: 'TSK-1001',
       title: 'Implement JWT Token Authentication Service',
       description: 'Add refresh token rotation and bearer auth validation across microservice gateways.',
-      assignedTo: 'EMP-101', // Emily Miller
+      assignedTo: 'EMP-101',
       department: 'Engineering',
       priority: 'high',
       status: 'in_progress',
@@ -97,7 +100,7 @@
       id: 'TSK-1002',
       title: 'Automate Staging CI/CD Pipeline on GitHub Actions',
       description: 'Run automated end-to-end linting, Django unit tests, and build Docker containers.',
-      assignedTo: 'EMP-102', // David Kim
+      assignedTo: 'EMP-102',
       department: 'DevOps & Cloud',
       priority: 'medium',
       status: 'pending',
@@ -109,7 +112,7 @@
       id: 'TSK-1003',
       title: 'Design Dark Mode Prototype and Token System',
       description: 'Build Figma design components and accessible high-contrast CSS variable themes.',
-      assignedTo: 'EMP-103', // Sarah Jenkins
+      assignedTo: 'EMP-103',
       department: 'Design & UI',
       priority: 'low',
       status: 'completed',
@@ -121,7 +124,7 @@
       id: 'TSK-1004',
       title: 'Database Schema Migration & Index Tuning',
       description: 'Benchmark composite indexes on tasks table to improve query performance.',
-      assignedTo: 'EMP-104', // Raj Patel
+      assignedTo: 'EMP-104',
       department: 'Engineering',
       priority: 'high',
       status: 'overdue',
@@ -133,7 +136,7 @@
       id: 'TSK-1005',
       title: 'Role-Based Access Control (RBAC) Architecture Review',
       description: 'Audit employee permission boundaries between admin operations and employee self-service.',
-      assignedTo: 'EMP-100', // Alex Davies
+      assignedTo: 'EMP-100',
       department: 'Operations & Management',
       priority: 'high',
       status: 'in_progress',
@@ -145,7 +148,7 @@
       id: 'TSK-1006',
       title: 'Employee Onboarding Document Portal',
       description: 'Create upload and compliance checklist interface for new engineering hires.',
-      assignedTo: 'EMP-101', // Emily Miller
+      assignedTo: 'EMP-101',
       department: 'Engineering',
       priority: 'medium',
       status: 'pending',
@@ -155,7 +158,6 @@
     }
   ];
 
-  // Initialize or fetch storage
   function initStorage() {
     try {
       if (!localStorage.getItem(STORAGE_KEYS.INITIALIZED)) {
@@ -170,14 +172,32 @@
         }));
         localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
       }
-    } catch (e) {
-      console.warn('ETMS: LocalStorage not accessible, using in-memory fallbacks', e);
-    }
+    } catch (e) {}
   }
 
   initStorage();
 
-  // Public Store API
+  // Background sync with Django REST API if available
+  if (isServerAvailable) {
+    fetch('/api/employees/')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(res.data));
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/tasks/')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(res.data));
+        }
+      })
+      .catch(() => {});
+  }
+
   window.ETMS = {
     getEmployees: function () {
       try {
@@ -221,6 +241,16 @@
 
       employees.unshift(newEmp);
       this.saveEmployees(employees);
+
+      // Async push to Django backend
+      if (isServerAvailable) {
+        fetch('/api/employees/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(empData)
+        }).catch(() => {});
+      }
+
       return newEmp;
     },
 
@@ -228,6 +258,10 @@
       let employees = this.getEmployees();
       employees = employees.filter(e => e.id !== id);
       this.saveEmployees(employees);
+
+      if (isServerAvailable) {
+        fetch(`/api/employees/${id}/`, { method: 'DELETE' }).catch(() => {});
+      }
     },
 
     getTasks: function () {
@@ -265,6 +299,16 @@
 
       tasks.unshift(newTask);
       this.saveTasks(tasks);
+
+      // Async push to Django backend
+      if (isServerAvailable) {
+        fetch('/api/tasks/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(taskData)
+        }).catch(() => {});
+      }
+
       return newTask;
     },
 
@@ -281,6 +325,15 @@
           task.progress = 25;
         }
         this.saveTasks(tasks);
+
+        // Async sync to Django backend
+        if (isServerAvailable) {
+          fetch(`/api/tasks/${taskId}/status/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus, progress: task.progress })
+          }).catch(() => {});
+        }
       }
       return task;
     },
@@ -289,6 +342,10 @@
       let tasks = this.getTasks();
       tasks = tasks.filter(t => t.id !== taskId);
       this.saveTasks(tasks);
+
+      if (isServerAvailable) {
+        fetch(`/api/tasks/${taskId}/`, { method: 'DELETE' }).catch(() => {});
+      }
     },
 
     getCurrentUser: function () {
@@ -350,16 +407,6 @@
       });
 
       return { total, inProgress, completed, pending, overdue };
-    },
-
-    resetToDemoData: function () {
-      try {
-        localStorage.removeItem(STORAGE_KEYS.INITIALIZED);
-        localStorage.removeItem(STORAGE_KEYS.EMPLOYEES);
-        localStorage.removeItem(STORAGE_KEYS.TASKS);
-        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-      } catch (e) {}
-      initStorage();
     }
   };
 })();
