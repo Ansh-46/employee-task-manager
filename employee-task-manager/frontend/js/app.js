@@ -262,7 +262,7 @@ function handleLoginPage() {
       window.ETMS.setCurrentUserRole(role);
       showToast(`Authenticated as ${role.toUpperCase()}. Redirecting...`, 'success');
       setTimeout(() => {
-        window.location.href = 'dashboard.html';
+        window.location.href = '/dashboard/';
       }, 600);
     });
   }
@@ -743,7 +743,7 @@ window.deleteEmployeePrompt = function (empId) {
 window.viewEmployeeProfile = function (empId) {
   // Store targeted employee ID and redirect to profile.html
   sessionStorage.setItem('etms_view_emp_id', empId);
-  window.location.href = 'profile.html';
+  window.location.href = '/profile/';
 };
 
 // ----------------------------------------------------------------------------
@@ -839,3 +839,5 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+
