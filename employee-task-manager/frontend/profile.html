@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile &bull; TaskFlow ERP</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body id="profileView">
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-mark">T</div>
+        <div class="logo-title">TaskFlow ERP</div>
+      </div>
+
+      <div class="sidebar-menu">
+        <div class="menu-label">Workspace</div>
+        <a href="dashboard.html">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="5"/>
+            </svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="menu-label">Operations</div>
+        <a href="tasks.html">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </span>
+          <span>Tasks &amp; Board</span>
+        </a>
+        <a href="employees.html">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span>Employees</span>
+        </a>
+
+        <div class="menu-label">Personal</div>
+        <a href="profile.html" class="active">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span>My Profile</span>
+        </a>
+        <a href="index.html">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </span>
+          <span>Sign Out</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="avatar-tag current-user-initials">AD</div>
+          <div class="user-details">
+            <h4 class="current-user-name">Alex Davies</h4>
+            <span class="current-user-role-badge badge badge-admin">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="page-title">Personal Profile &amp; Deliverables</h1>
+        </div>
+
+        <div class="topbar-right">
+          <a href="profile.html" class="avatar-tag sm current-user-initials" style="text-decoration: none;">AD</a>
+        </div>
+      </header>
+
+      <main class="page-container">
+        <!-- Profile Banner Card -->
+        <div class="card" style="margin-bottom: 22px;">
+          <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+            <div id="profileAvatar" class="avatar-tag" style="width: 72px; height: 72px; font-size: 1.8rem; background: var(--primary);">
+              AD
+            </div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <h2 id="profileFullName" style="font-size: 1.35rem; font-weight: 700;">Alex Davies</h2>
+                <span id="profileRoleBadge" class="badge badge-admin">Administrator</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">
+                <span id="profileTitle">Engineering Director</span> &bull; Department: <strong id="profileDept">Operations &amp; Management</strong>
+              </p>
+              <p style="color: var(--text-light); font-size: 0.82rem; margin-top: 4px;">
+                Email: <span id="profileEmail" style="color: var(--text-main);">admin@corp.com</span>
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-outline btn-sm" onclick="showToast('Profile credentials are managed via single sign-on', 'info')">
+                Account Settings
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Tasks Metrics -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <p>Assigned Deliverables</p>
+              <h3 id="profileStatAssigned">0</h3>
+            </div>
+            <div class="stat-icon icon-blue">📋</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <p>In Progress</p>
+              <h3 id="profileStatInProg">0</h3>
+            </div>
+            <div class="stat-icon icon-yellow">⚡</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <p>Completed Tasks</p>
+              <h3 id="profileStatDone">0</h3>
+            </div>
+            <div class="stat-icon icon-green">✅</div>
+          </div>
+        </div>
+
+        <!-- Assigned Tasks Table -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">My Deliverables &amp; Milestones</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">Self-service workflow</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Task Deliverable</th>
+                  <th>Priority</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="profileTasksTbody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Quick Status Update -->
+  <div class="modal-overlay" id="updateStatusModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Update My Task Status</h3>
+        <button class="modal-close" onclick="closeModal('updateStatusModal')">&times;</button>
+      </div>
+      <form id="updateStatusForm">
+        <input type="hidden" id="editTaskId">
+        <div class="modal-body">
+          <p id="editTaskTitleText" style="font-weight: 700; margin-bottom: 14px; font-size: 0.95rem;"></p>
+
+          <div class="form-group">
+            <label class="form-label" for="editStatusSelect">Execution Status</label>
+            <select id="editStatusSelect" class="form-control">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <label class="form-label" for="editProgressRange" style="margin-bottom: 0;">Progress</label>
+              <span id="editProgressVal" style="font-weight: 700; color: var(--primary); font-size: 0.85rem;">50%</span>
+            </div>
+            <input type="range" id="editProgressRange" min="0" max="100" step="5" class="form-control" style="cursor: pointer;">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('updateStatusModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
